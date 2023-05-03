@@ -85,8 +85,6 @@ public:
 
       if (currentIndex != previousIndex) {
         if (currentMenuItem && currentMenuItem->drawable) {
-            Serial.print(F("stop "));
-            Serial.println(currentMenuItem->drawable->name);
             currentMenuItem->drawable->stop();
         }
 
@@ -94,8 +92,6 @@ public:
 
         if (currentMenuItem->drawable) {
             currentMenuItem->drawable->start();
-            Serial.print(F("start "));
-            Serial.println(currentMenuItem->drawable->name);
         }
 
         currentPlaylist = static_cast<Playlist*>(currentMenuItem->drawable);

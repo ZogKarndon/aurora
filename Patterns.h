@@ -170,8 +170,6 @@ class Patterns : public Playlist {
     void stop() {
       if (currentItem)
       {
-        Serial.print(F("stoping "));
-        Serial.println(currentItem->name);
         currentItem->stop();
       }
     }
@@ -179,8 +177,6 @@ class Patterns : public Playlist {
     void start() {
       if (currentItem)
       {
-        Serial.print(F("starting "));
-        Serial.println(currentItem->name);
         currentItem->start();
       }
     }
@@ -216,8 +212,6 @@ class Patterns : public Playlist {
 
       if (currentItem)
       {
-        Serial.print(F("Moving to"));
-        Serial.println(currentItem->name);
         currentItem->start();
       }
 
@@ -255,9 +249,7 @@ class Patterns : public Playlist {
 #if AUDIO > 0
       ReadAudio();
 #endif
-        Serial.print(F("drawing "));
-        Serial.println(currentItem->name);
-              return currentItem->drawFrame();
+     return currentItem->drawFrame();
     }
 
     void listPatterns() {
