@@ -19,6 +19,7 @@ Thumbs.db
 *.vcxproj
 __vm/
 .vs/
-bin/
+bin/**
 *.hex
+*.bin
 CppProperties.json
