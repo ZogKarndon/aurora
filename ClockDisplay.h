@@ -87,7 +87,7 @@ class ClockDisplay : public Playlist {
       hasDS1307RTC = false;
 
       // try to read the DS1307RTC
-      if (RTC.read(time)) {
+      if (RTC.read(curtime)) {
         hasDS1307RTC = true;
         return true;
       }
@@ -98,7 +98,7 @@ class ClockDisplay : public Playlist {
           hasSetSyncProvider = true;
         }
 
-        breakTime(now(), time);
+        breakTime(now(), curtime);
         return true;
       }
 
@@ -146,7 +146,7 @@ class ClockDisplay : public Playlist {
       clockDigitalShort.loadSettings();
 
       readTime();
-      time_t currentTime = makeTime(time);
+      time_t currentTime = makeTime(curtime);
       if (clockCountdown.targetTime <= currentTime) {
         itemCount--;
       }

@@ -26,7 +26,7 @@
 class SettingsBackgroundBrightness : public Runnable {
   private:
     boolean hasChanges = false;
-    char text[4];
+    char text[5];
 
   public:
     void run() {
@@ -36,7 +36,6 @@ class SettingsBackgroundBrightness : public Runnable {
         // then Value from 255 (fully-saturated color) to 45 (mostly black) middle to bottom, skipping anything lower than 45 which is indistinguishable from black.
         CHSV chsv;
         CRGB crgb;
-        CRGB selectedColor;
         for (int x = 0; x < MATRIX_WIDTH - 1; x += 1) {
           uint8_t hue = x * 8;
 

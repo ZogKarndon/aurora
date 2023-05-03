@@ -41,6 +41,8 @@ SetTimeState SetTimeStates[SetTimeStatesCount] = {
   SetSecond,
 };
 
+#if CLOCK > 0
+
 class ClockDigitalShort : public Drawable {
   public:
     char timeBuffer[9];
@@ -57,14 +59,14 @@ class ClockDigitalShort : public Drawable {
       int x = 1;
 
       if (isTimeAvailable) {
-        uint8_t hour = time.Hour;
+        uint8_t hour = curtime.Hour;
         if (!twentyFourHour && hour > 12)
           hour -= 12;
         else if (!twentyFourHour && hour == 0)
           hour = 12;
 
         indexedLayer.setFont(gohufont11b);
-        sprintf(timeBuffer, "%d:%02d", hour, time.Minute);
+        sprintf(timeBuffer, "%d:%02d", hour, curtime.Minute);
 
         if (hour < 10)
           x = 4;
@@ -120,5 +122,6 @@ class ClockDigitalShort : public Drawable {
     }
 };
 extern ClockDigitalShort clockDigitalShort;
+#endif
 
 #endif

@@ -43,7 +43,7 @@ class Boid {
     float desiredseparation = 4;
     float neighbordist = 8;
     byte colorIndex = 0;
-    float mass;
+    float mass = 1;
 
     boolean enabled = true;
 

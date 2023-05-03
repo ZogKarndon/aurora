@@ -32,9 +32,9 @@ class SettingsSetTime : public Runnable {
 
     void setTimeHardware() {
       if (hasDS1307RTC)
-        RTC.write(time);
+        RTC.write(curtime);
       else {
-        time_t t = makeTime(time);
+        time_t t = makeTime(curtime);
         Teensy3Clock.set(t);
         setTime(t);
       }
@@ -92,7 +92,7 @@ class SettingsSetTime : public Runnable {
 
       clockDisplay.readTime();
 
-      sprintf(timeBuffer, "%02d-%02d-%02d", time.Hour, time.Minute, time.Second);
+      sprintf(timeBuffer, "%02d-%02d-%02d", curtime.Hour, curtime.Minute, curtime.Second);
 
       indexedLayer.setIndexedColor(1, clockDisplay.color);
       indexedLayer.fillScreen(0);
@@ -143,31 +143,31 @@ class SettingsSetTime : public Runnable {
     void adjust(int d) {
       switch (state) {
         case SetHour:
-          if (d > 0 && time.Hour == 23)
-            time.Hour = 0;
-          else if (d < 1 && time.Hour == 0)
-            time.Hour = 23;
+          if (d > 0 && curtime.Hour == 23)
+            curtime.Hour = 0;
+          else if (d < 1 && curtime.Hour == 0)
+            curtime.Hour = 23;
           else
-            time.Hour += d;
+            curtime.Hour += d;
           break;
 
         case SetMinute:
-          if (d > 0 && time.Minute == 59)
-            time.Minute = 0;
-          else if (d < 1 && time.Minute == 0)
-            time.Minute = 59;
+          if (d > 0 && curtime.Minute == 59)
+            curtime.Minute = 0;
+          else if (d < 1 && curtime.Minute == 0)
+            curtime.Minute = 59;
           else
-            time.Minute += d;
+            curtime.Minute += d;
           break;
 
 
         case SetSecond:
-          if (d > 0 && time.Second == 59)
-            time.Second = 0;
-          else if (d < 1 && time.Second == 0)
-            time.Second = 59;
+          if (d > 0 && curtime.Second == 59)
+            curtime.Second = 0;
+          else if (d < 1 && curtime.Second == 0)
+            curtime.Second = 59;
           else
-            time.Second += d;
+            curtime.Second += d;
           break;
       }
 

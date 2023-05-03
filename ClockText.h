@@ -84,8 +84,8 @@ class ClockText : public Drawable {
       int x = 1;
 
       if (isTimeAvailable) {
-        uint8_t hour = time.Hour;
-        uint8_t minute = time.Minute;
+        uint8_t hour = curtime.Hour;
+        uint8_t minute = curtime.Minute;
 
         if (hour > 12)
           hour -= 12;

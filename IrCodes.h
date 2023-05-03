@@ -538,7 +538,7 @@ InputCommand readSerialCommand() {
     effects.setPalette(item->valuestring);
     command = InputCommand::None;
   }
-
+#if AUDIOPATTERN > 0
   // audio pattern
   item = aJson.getObjectItem(root, "audiopattern");
   if (item && item->type == aJson_String) {
@@ -557,7 +557,7 @@ InputCommand readSerialCommand() {
     else
       command = InputCommand::None;
   }
-
+#endif
   // pattern
   item = aJson.getObjectItem(root, "pattern");
   if (item && item->type == aJson_String) {
@@ -628,7 +628,9 @@ InputCommand readSerialCommand() {
       command = InputCommand::None;
     }
     else if ((String) item->valuestring == "ListAudioPatterns") {
-      listAudioPatterns();
+#if AUDIOPATTERN > 0
+        listAudioPatterns();
+#endif
       command = InputCommand::None;
     }
     else if ((String) item->valuestring == "ListPatterns") {

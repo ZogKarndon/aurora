@@ -34,7 +34,7 @@
 #define AudioLogic_H
 
 // MSGEQ7 wiring
-#define AUDIO_LEFT_PIN A14
+#define AUDIO_LEFT_PIN A4
 #define MSGEQ7_STROBE_PIN 1
 #define MSGEQ7_RESET_PIN 0
 

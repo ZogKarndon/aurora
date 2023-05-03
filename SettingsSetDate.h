@@ -45,9 +45,9 @@ class SettingsSetDate : public Runnable {
 
     void setTimeHardware() {
       if (hasDS1307RTC)
-        RTC.write(time);
+        RTC.write(curtime);
       else {
-        time_t t = makeTime(time);
+        time_t t = makeTime(curtime);
         Teensy3Clock.set(t);
         setTime(t);
       }
@@ -104,13 +104,13 @@ class SettingsSetDate : public Runnable {
       indexedLayer.setFont(font3x5);
 
       if (isTimeAvailable) {
-        uint16_t year = time.Year + 1970;
+        uint16_t year = curtime.Year + 1970;
         while (year > 999)
           year -= 1000;
         while (year > 99)
           year -= 100;
 
-        sprintf(timeBuffer, "%02d-%02d-%02d", year, time.Month, time.Day);
+        sprintf(timeBuffer, "%02d-%02d-%02d", year, curtime.Month, curtime.Day);
       }
       else {
         sprintf(timeBuffer, "No Clock");
@@ -165,26 +165,26 @@ class SettingsSetDate : public Runnable {
     void adjust(int d) {
       switch (state) {
         case SetYear:
-          if (d > 0 || time.Year > 0)
-            time.Year += d;
+          if (d > 0 || curtime.Year > 0)
+            curtime.Year += d;
           break;
 
         case SetMonth:
-          if (d > 0 && time.Month == 12)
-            time.Month = 1;
-          else if (d < 1 && time.Month == 1)
-            time.Month = 12;
+          if (d > 0 && curtime.Month == 12)
+            curtime.Month = 1;
+          else if (d < 1 && curtime.Month == 1)
+            curtime.Month = 12;
           else
-            time.Month += d;
+            curtime.Month += d;
           break;
 
         case SetDay:
-          if (d > 0 && time.Day == 31)
-            time.Day = 1;
-          else if (d < 1 && time.Day == 1)
-            time.Day = 31;
+          if (d > 0 && curtime.Day == 31)
+            curtime.Day = 1;
+          else if (d < 1 && curtime.Day == 1)
+            curtime.Day = 31;
           else
-            time.Day += d;
+            curtime.Day += d;
           break;
 
         default:

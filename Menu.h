@@ -33,10 +33,10 @@ public:
     Random,
   };
 
-  MenuItem* currentMenuItem;
-  Playlist* currentPlaylist;
+  MenuItem* currentMenuItem = nullptr;
+  Playlist* currentPlaylist = nullptr;
   bool isPlaylist = false;
-  Runnable* currentRunnable;
+  Runnable* currentRunnable = nullptr;
   bool isRunnable = false;
 
   int currentIndex = 0;
@@ -46,7 +46,7 @@ public:
   bool clockVisible = false;
   bool messageVisible = false;
 
-  unsigned int playMode = Paused;
+  unsigned int playMode = Autoplay;
   unsigned int autoPlayTimeout = 0;
   bool playModeChanged = false;
   bool showingPlayModeIndicator = false;
@@ -80,18 +80,23 @@ public:
 
   boolean freezeDisplay = false;
 
-  void run(MenuItem* menuItems [], int menuItemsCount) {
+  void run(MenuItem* menuItems[], int menuItemsCount) {
     while (true) {
 
       if (currentIndex != previousIndex) {
         if (currentMenuItem && currentMenuItem->drawable) {
-          currentMenuItem->drawable->stop();
+            Serial.print(F("stop "));
+            Serial.println(currentMenuItem->drawable->name);
+            currentMenuItem->drawable->stop();
         }
 
         currentMenuItem = menuItems[currentIndex];
 
-        if (currentMenuItem->drawable)
-          currentMenuItem->drawable->start();
+        if (currentMenuItem->drawable) {
+            currentMenuItem->drawable->start();
+            Serial.print(F("start "));
+            Serial.println(currentMenuItem->drawable->name);
+        }
 
         currentPlaylist = static_cast<Playlist*>(currentMenuItem->drawable);
         isPlaylist = currentMenuItem->drawable->isPlaylist();
@@ -106,7 +111,9 @@ public:
       unsigned int requestedDelay = 30;
 
       if (!freezeDisplay)
-        requestedDelay = draw();
+      {
+          requestedDelay = draw();
+      }
 
       unsigned int requestedDelayTimeout = millis() + requestedDelay;
 
@@ -115,32 +122,32 @@ public:
           restartAndJumpToApp();
         }
 
+
         updateStatusLed();
 
         updateForeground(menuItems, menuItemsCount);
-
+#if !HAS_IR
         InputCommand command = readCommand(defaultHoldDelay);
+#else
+        InputCommand command = InputCommand::None;
+#endif
 
         if (command == InputCommand::Up && visible && !isHolding) {
           currentPlaylist->stop();
           move(menuItems, menuItemsCount, -1);
           break;
-        }
-        else if (command == InputCommand::Down && visible && !isHolding) {
+        } else if (command == InputCommand::Down && visible && !isHolding) {
           currentPlaylist->stop();
           move(menuItems, menuItemsCount, 1);
           break;
-        }
-        else if (command == InputCommand::Left && showingPaletteIndicator && !isHolding && currentMenuItem->paletteEnabled) {
+        } else if (command == InputCommand::Left && showingPaletteIndicator && !isHolding && currentMenuItem->paletteEnabled) {
           effects.CyclePalette(-1);
           paletteChanged = true;
           showingPaletteIndicator = true;
           paletteIndicatorTimout = millis() + paletteIndicatorDuration;
-        }
-        else if (command == InputCommand::Left && showingPlayModeIndicator && !isHolding && currentMenuItem->playModeEnabled) {
+        } else if (command == InputCommand::Left && showingPlayModeIndicator && !isHolding && currentMenuItem->playModeEnabled) {
           adjustPlayMode(-1);
-        }
-        else if (command == InputCommand::Left && isPlaylist) {
+        } else if (command == InputCommand::Left && isPlaylist) {
           if (playMode == Random)
             currentPlaylist->moveRandom(-1);
           else
@@ -150,17 +157,14 @@ public:
             autoPlayTimeout = millis() + (autoPlayDurationSeconds * 1000);
           }
           break;
-        }
-        else if (command == InputCommand::Right && showingPaletteIndicator && !isHolding && currentMenuItem->paletteEnabled) {
+        } else if (command == InputCommand::Right && showingPaletteIndicator && !isHolding && currentMenuItem->paletteEnabled) {
           effects.CyclePalette(1);
           paletteChanged = true;
           showingPaletteIndicator = true;
           paletteIndicatorTimout = millis() + paletteIndicatorDuration;
-        }
-        else if (command == InputCommand::Right && showingPlayModeIndicator && !isHolding && currentMenuItem->playModeEnabled) {
+        } else if (command == InputCommand::Right && showingPlayModeIndicator && !isHolding && currentMenuItem->playModeEnabled) {
           adjustPlayMode(1);
-        }
-        else if (command == InputCommand::Right && isPlaylist) {
+        } else if (command == InputCommand::Right && isPlaylist) {
           if (playMode == Random)
             currentPlaylist->moveRandom(1);
           else
@@ -170,34 +174,28 @@ public:
             autoPlayTimeout = millis() + (autoPlayDurationSeconds * 1000);
           }
           break;
-        }
-        else if (command == InputCommand::Select && showingPaletteIndicator && !isHolding && currentMenuItem->paletteEnabled) {
+        } else if (command == InputCommand::Select && showingPaletteIndicator && !isHolding && currentMenuItem->paletteEnabled) {
           showingPaletteIndicator = false;
           updateScrollText = true;
-        }
-        else if (command == InputCommand::Select && showingPlayModeIndicator && !isHolding && currentMenuItem->playModeEnabled) {
+        } else if (command == InputCommand::Select && showingPlayModeIndicator && !isHolding && currentMenuItem->playModeEnabled) {
           showingPlayModeIndicator = false;
           updateScrollText = true;
-        }
-        else if (command == InputCommand::Select && !isHolding) {
+        } else if (command == InputCommand::Select && !isHolding) {
           if (currentMenuItem->exit) {
             currentIndex = 0;
             previousIndex = -1;
             if (currentMenuItem->drawable)
               currentMenuItem->drawable->stop();
             return;
-          }
-          else if (isRunnable) {
+          } else if (isRunnable) {
             scrollingLayer.start("", 1);
             currentRunnable->run();
-          }
-          else {
+          } else {
             visible = !visible;
           }
           updateScrollText = true;
           break;
-        }
-        else if (command == InputCommand::Back) {
+        } else if (command == InputCommand::Back) {
           if (!visible || canMoveBack) {
             if (visible) {
               currentIndex = 0;
@@ -205,15 +203,13 @@ public:
               if (currentMenuItem->drawable)
                 currentMenuItem->drawable->stop();
               return;
-            }
-            else {
+            } else {
               visible = true;
             }
             updateScrollText = true;
             break;
           }
-        }
-        else if (command == InputCommand::CycleBrightness) {
+        } else if (command == InputCommand::CycleBrightness) {
           bool wasHolding = isHolding;
           if (isHolding || (showingBrightnessIndicator && cycleBrightness() == 0)) {
             heldButtonHasBeenHandled();
@@ -228,72 +224,62 @@ public:
             showingBrightnessIndicator = true;
             brightnessIndicatorTimout = millis() + brightnessIndicatorDuration;
           }
-        }
-        else if (command == InputCommand::Power) {
+        } else if (command == InputCommand::Power) {
           powerOff();
           previousIndex = -1;
           if (currentMenuItem->drawable)
             currentMenuItem->drawable->stop();
-        }
-        else if (command == InputCommand::BrightnessUp) {
+        } else if (command == InputCommand::BrightnessUp) {
           adjustBrightness(1, false);
           saveBrightnessSetting();
           brightnessChanged = true;
           showingBrightnessIndicator = true;
           brightnessIndicatorTimout = millis() + brightnessIndicatorDuration;
-        }
-        else if (command == InputCommand::BrightnessDown) {
+        } else if (command == InputCommand::BrightnessDown) {
           adjustBrightness(-1, false);
           saveBrightnessSetting();
           brightnessChanged = true;
           showingBrightnessIndicator = true;
           brightnessIndicatorTimout = millis() + brightnessIndicatorDuration;
-        }
-        else if (command == InputCommand::PlayMode && !isHolding && currentMenuItem->playModeEnabled) { // cycle play mode (pause/play/random)
+        } else if (command == InputCommand::PlayMode && !isHolding && currentMenuItem->playModeEnabled) {  // cycle play mode (pause/play/random)
           if (showingPlayModeIndicator) adjustPlayMode(1);
           else adjustPlayMode(0);
-        }
-        else if (command == InputCommand::Palette && !isHolding && currentMenuItem->paletteEnabled) { // cycle color pallete
+        } else if (command == InputCommand::Palette && !isHolding && currentMenuItem->paletteEnabled) {  // cycle color pallete
           if (showingPaletteIndicator)
             effects.CyclePalette();
           paletteChanged = true;
           showingPaletteIndicator = true;
           paletteIndicatorTimout = millis() + paletteIndicatorDuration;
-        }
-        else if (command == InputCommand::ShowClock) {
+        } else if (command == InputCommand::ShowClock) {
           messageVisible = false;
           clockVisible = true;
           updateScrollText = true;
-        }
-        else if (command == InputCommand::HideOverlay) {
+        } else if (command == InputCommand::HideOverlay) {
           messageVisible = false;
           clockVisible = false;
           updateScrollText = true;
-        }
-        else if (command == InputCommand::ShowCurrentMessage) {
+        } else if (command == InputCommand::ShowCurrentMessage) {
           messageVisible = true;
           clockVisible = false;
           updateScrollText = true;
-        }
-        else if (command == InputCommand::CycleClockAndMessageFiles && !visible) { // cycle through clock faces and messages
+        } else if (command == InputCommand::CycleClockAndMessageFiles && !visible) {  // cycle through clock faces and messages
+#if CLOCK > 0
           if (isHolding || (!clockVisible && !messageVisible)) {
             if (isHolding) heldButtonHasBeenHandled();
 
             if (!clockVisible && !messageVisible) {
               // if neither are visible, just show the current overlay
-              clockDisplay.readTime();
+              //clockDisplay.readTime();
               clockVisible = isTimeAvailable && overlayIndex < clockDisplay.itemCount;
               messageVisible = !clockVisible;
               if (messageVisible && messagePlayer.currentIndex < 0)
                 messageVisible = messagePlayer.loadNextMessage();
-            }
-            else {
+            } else {
               // if either are visible, turn off the overlay
               messageVisible = false;
               clockVisible = false;
             }
-          }
-          else {
+          } else {
             // overlay is visible, move to next
             overlayIndex++;
 
@@ -302,55 +288,50 @@ public:
               clockDisplay.moveTo(overlayIndex);
               clockVisible = true;
               messageVisible = false;
-            }
-            else if (messagePlayer.count > 0) { // && (!isTimeAvailable || overlayIndex - clockDisplay.itemCount < messagePlayer.count - 1)) {
-              // otherwise try to move to the next message
+            } else if (messagePlayer.count > 0) {  // && (!isTimeAvailable || overlayIndex - clockDisplay.itemCount < messagePlayer.count - 1)) {
+                                                   // otherwise try to move to the next message
               if (messagePlayer.loadNextMessage()) {
                 messageVisible = true;
                 clockVisible = false;
-              }
-              else {
+              } else {
                 overlayIndex = 0;
                 clockDisplay.moveTo(overlayIndex);
                 messageVisible = false;
                 clockVisible = false;
               }
-            }
-            else {
+            } else {
               overlayIndex = 0;
               clockDisplay.moveTo(overlayIndex);
               messageVisible = false;
               clockVisible = false;
             }
           }
-
+#endif
           updateScrollText = true;
-        }
-        else if (command == InputCommand::Update) {
+        } else if (command == InputCommand::Update) {
           updateScrollText = true;
           break;
         }
+#if AUDIO > 0
         else if ((command == InputCommand::AudioScaleUp || (command == InputCommand::Up && !visible)) && currentMenuItem->audioScaleEnabled) {
           adjustAudioScale(1);
           audioScaleChanged = true;
           showingAudioScaleIndicator = true;
           audioScaleIndicatorTimout = millis() + audioScaleIndicatorDuration;
-        }
-        else if ((command == InputCommand::AudioScaleDown || (command == InputCommand::Down && !visible)) && currentMenuItem->audioScaleEnabled) {
+        } else if ((command == InputCommand::AudioScaleDown || (command == InputCommand::Down && !visible)) && currentMenuItem->audioScaleEnabled) {
           adjustAudioScale(-1);
           audioScaleChanged = true;
           showingAudioScaleIndicator = true;
           audioScaleIndicatorTimout = millis() + audioScaleIndicatorDuration;
         }
+#endif
         else if (command == InputCommand::ToggleSettingsMenuVisibility) {
           toggleSettingsMenuVisibility();
-        }
-        else if (command == InputCommand::ShowPatternName) {
+        } else if (command == InputCommand::ShowPatternName) {
           showingPatternIndicator = true;
           updateScrollText = true;
           patternIndicatorTimout = millis() + patternIndicatorDuration;
-        }
-        else if (command == InputCommand::FreezeDisplay) {
+        } else if (command == InputCommand::FreezeDisplay) {
           freezeDisplay = !freezeDisplay;
           if (freezeDisplay)
             scrollingLayer.setSpeed(0);
@@ -358,16 +339,18 @@ public:
             scrollingLayer.setSpeed(messagePlayer.scrollSpeed);
           else
             scrollingLayer.setSpeed(scrollSpeed);
-        }
-        else {
+        } else {
           if (playMode != Paused && millis() >= autoPlayTimeout) {
             if (isPlaylist && currentPlaylist->isCurrentItemFinished) {
-              if (playMode == Autoplay)
+              if (playMode == Autoplay) {
+                Serial.println(F("move next "));
                 currentPlaylist->move(1);
-              else
+              } else {
+                Serial.println(F("move random "));
                 currentPlaylist->moveRandom(1);
-
+              }
               autoPlayTimeout = millis() + (autoPlayDurationSeconds * 1000);
+
               break;
             }
           }
@@ -398,13 +381,12 @@ public:
 
 private:
 
-  void move(MenuItem* menuItems [], int menuItemsCount, int delta) {
+  void move(MenuItem* menuItems[], int menuItemsCount, int delta) {
     currentIndex += delta;
 
     if (currentIndex >= menuItemsCount) {
       currentIndex = 0;
-    }
-    else if (currentIndex < 0) {
+    } else if (currentIndex < 0) {
       currentIndex = menuItemsCount - 1;
     }
 
@@ -414,14 +396,13 @@ private:
 
       if (currentIndex >= menuItemsCount) {
         currentIndex = 0;
-      }
-      else if (currentIndex < 0) {
+      } else if (currentIndex < 0) {
         currentIndex = menuItemsCount - 1;
       }
     }
   }
 
-  void updateForeground(MenuItem* menuItems [], int menuItemsCount) {
+  void updateForeground(MenuItem* menuItems[], int menuItemsCount) {
     if (showingPlayModeIndicator && millis() >= playModeIndicatorTimout) {
       showingPlayModeIndicator = false;
       updateScrollText = true;
@@ -431,12 +412,12 @@ private:
       showingBrightnessIndicator = false;
       updateScrollText = true;
     }
-
+#if AUDIO > 0
     if (showingAudioScaleIndicator && millis() >= audioScaleIndicatorTimout) {
       showingAudioScaleIndicator = false;
       updateScrollText = true;
     }
-
+#endif
     if (showingPaletteIndicator && millis() >= paletteIndicatorTimout) {
       showingPaletteIndicator = false;
       updateScrollText = true;
@@ -447,28 +428,29 @@ private:
       updateScrollText = true;
     }
 
-    if (currentIndex != previousIndex || updateScrollText || playModeChanged || brightnessChanged || audioScaleChanged || paletteChanged) {
+    if (currentIndex != previousIndex || updateScrollText || playModeChanged || brightnessChanged || /* audioScaleChanged || */ paletteChanged) {
       previousIndex = currentIndex;
       updateScrollText = false;
 
       indexedLayer.fillScreen(0);
 
       scrollingLayer.start("", 1);
-        
+
       if (brightnessChanged || showingBrightnessIndicator) {
         brightnessChanged = false;
         indexedLayer.setFont(gohufont11b);
         indexedLayer.setIndexedColor(1, menuColor);
 
-        int level = ((float) getBrightnessLevel() / (float) (brightnessCount - 1)) * 100;
+        int level = ((float)getBrightnessLevel() / (float)(brightnessCount - 1)) * 100;
         if (level < 1 && brightness > 0)
           level = 10;
 
-        char text[4];
+        char text[5];
         sprintf(text, "%3d%%", level);
 
         indexedLayer.drawString(4, kMatrixHeight / 2 - 5, 1, text);
       }
+#if AUDIO > 0
       else if (audioScaleChanged || showingAudioScaleIndicator) {
         audioScaleChanged = false;
         indexedLayer.setFont(font3x5);
@@ -482,14 +464,14 @@ private:
 
         indexedLayer.drawString(1, 1, 1, text);
       }
+#endif
       else if (paletteChanged || showingPaletteIndicator) {
         paletteChanged = false;
         indexedLayer.setFont(font3x5);
         indexedLayer.setIndexedColor(1, menuColor);
 
         indexedLayer.drawString(0, kMatrixHeight / 2 - 2, 1, effects.currentPaletteName);
-      }
-      else if (showingPatternIndicator) {
+      } else if (showingPatternIndicator) {
         if (isPlaylist) {
           indexedLayer.setFont(font3x5);
           indexedLayer.setIndexedColor(1, menuColor);
@@ -500,8 +482,7 @@ private:
 
           indexedLayer.drawString(1, kMatrixHeight / 2 - 2, 1, currentItemName);
         }
-      }
-      else if (playModeChanged || showingPlayModeIndicator) {
+      } else if (playModeChanged || showingPlayModeIndicator) {
         playModeChanged = false;
         indexedLayer.setFont(font3x5);
         indexedLayer.setIndexedColor(1, menuColor);
@@ -520,18 +501,16 @@ private:
             indexedLayer.drawString(0, kMatrixHeight / 2 + 2, 1, " Random");
             break;
         }
-      }
-      else if (visible) {
-        char *name = currentMenuItem->name;
+      } else if (visible) {
+        char* name = currentMenuItem->name;
         scrollingLayer.setMode(wrapForwardFromLeft); /* wrapForward, bounceForward, bounceReverse, stopped, off, wrapForwardFromLeft */
         scrollingLayer.setSpeed(scrollSpeed);
         scrollingLayer.setFont(gohufont11b);
         scrollingLayer.setColor(menuColor);
         scrollingLayer.setOffsetFromTop(menuY);
         scrollingLayer.start(name, -1);
-      }
-      else if (messageVisible) {
-        char *message = messagePlayer.message;
+      } else if (messageVisible) {
+        char* message = messagePlayer.message;
         scrollingLayer.setMode(messagePlayer.scrollMode);
         scrollingLayer.setSpeed(messagePlayer.scrollSpeed);
         scrollingLayer.setFont(messagePlayer.getFont());
@@ -539,24 +518,34 @@ private:
         scrollingLayer.setOffsetFromTop(messagePlayer.offsetFromTop);
         scrollingLayer.start(message, -1);
       }
-//      else if (clockVisible) {
-//        scrollingLayer.start("", 1);
-//      }
-//      else {
-//        scrollingLayer.start("", 1);
-//      }
+      //      else if (clockVisible) {
+      //        scrollingLayer.start("", 1);
+      //      }
+      //      else {
+      //        scrollingLayer.start("", 1);
+      //      }
 
-      if (!visible && !showingPlayModeIndicator && !showingBrightnessIndicator && !showingAudioScaleIndicator && !showingPaletteIndicator && clockVisible) {
+
+      if (!visible && !showingPlayModeIndicator && !showingBrightnessIndicator &&
+#if AUDIO > 0
+          !showingAudioScaleIndicator &&
+#endif
+          !showingPaletteIndicator && clockVisible) {
+#if CLOCK > 0
         clockDisplay.drawFrame();
+#endif
       }
 
       indexedLayer.swapBuffers();
-    }
-    else if (!visible && !showingPlayModeIndicator && !showingBrightnessIndicator && !showingAudioScaleIndicator && !showingPaletteIndicator && clockVisible) {
+    } else if (!visible && !showingPlayModeIndicator && !showingBrightnessIndicator &&
+#if AUDIO > 0
+               !showingAudioScaleIndicator &&
+#endif
+               !showingPaletteIndicator && clockVisible) {
       indexedLayer.fillScreen(0);
-
+#if CLOCK > 0
       clockDisplay.drawFrame();
-
+#endif
       indexedLayer.swapBuffers();
     }
   }
@@ -577,8 +566,7 @@ private:
     if (streaming) {
       visible = false;
       updateScrollText = true;
-    }
-    else {
+    } else {
       if (wasStreaming && visibleBeforeStreaming) {
         visible = true;
         updateScrollText = true;

@@ -91,7 +91,7 @@ public:
   }
 
   uint8_t createMessagesFile() {
-    File file = SD.open("/messages.txt", O_CREAT | O_TRUNC | O_WRITE);
+    File file = SD.open("/messages.txt", FILE_WRITE_BEGIN);
     if (file) {
       file.print("Your first message\r\nYour second message");
       file.close();

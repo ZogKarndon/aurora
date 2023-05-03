@@ -58,12 +58,12 @@ public:
 
   unsigned int drawFrame() {
     if (isTimeAvailable) {
-      time_t currentTime = makeTime(time);
+      time_t currentTime = makeTime(curtime);
 
       //        Serial.print("target: ");
       //        printTime(target);
       //        Serial.print("current: ");
-      //        printTime(time);
+      //        printTime(curtime);
 
       if (targetTime > currentTime) {
         unsigned long timeRemaining = targetTime - currentTime;

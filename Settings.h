@@ -25,15 +25,19 @@
 
 #include "SettingsBrightness.h"
 #include "SettingsBackgroundBrightness.h"
+#if CLOCK > 0
 #include "SettingsMoveClock.h"
 #include "SettingsSetTime.h"
 #include "SettingsSetDate.h"
 #include "SettingsClockColor.h"
 #include "SettingsClock24Hour.h"
+#endif
 #include "SettingsMenuColor.h"
 #include "SettingsMoveMenu.h"
 #include "SettingsAutoplayDuration.h"
+#if AUDIO > 0
 #include "SettingsAudioCalibration.h"
+#endif
 #include "SettingsUpdateFiles.h"
 //#include "SettingsDemoMode.h"
 
@@ -43,13 +47,17 @@ class Settings : public Runnable {
     SettingsBackgroundBrightness backgroundBrightness;
     SettingsMenuColor menuColor;
     SettingsMoveMenu moveMenu;
+#if CLOCK > 0
     SettingsMoveClock moveClock;
     SettingsClockColor clockColor;
     SettingsSetTime setTime;
     SettingsSetDate setDate;
     SettingsClock24Hour set24Hour;
+#endif
     SettingsAutoplayDuration setAutoplayDuration;
+#if AUDIO > 0
     SettingsAudioCalibration audioCalibration;
+#endif
     SettingsUpdateFiles updateFiles;
     //SettingsDemoMode demoMode;
     Drawable exit;
@@ -61,12 +69,16 @@ class Settings : public Runnable {
     MenuItem menuItemMenuColor = MenuItem((char *)"Menu Color", &menuColor);
     MenuItem menuItemMoveMenu = MenuItem((char *)"Move Menu", &moveMenu);
     MenuItem menuItemAutoplayDuration = MenuItem((char *)"Autoplay Duration", &setAutoplayDuration);
+#if CLOCK > 0
     MenuItem menuItemMoveClock = MenuItem((char *)"Move Clock", &moveClock);
     MenuItem menuItemClockColor = MenuItem((char *)"Clock Color", &clockColor);
     MenuItem menuItemClock24Hour = MenuItem((char *)"12/24 Hour Clock", &set24Hour);
     MenuItem menuItemSetTime = MenuItem((char *)"Set Time", &setTime);
     MenuItem menuItemSetDate = MenuItem((char *)"Set Date", &setDate);
+#endif
+#if AUDIO > 0
     MenuItem menuItemNoiseReduction = MenuItem((char *)"Audio Calibration", &audioCalibration);
+#endif
     MenuItem menuItemUpdateFiles = MenuItem((char *)"Update Files", &updateFiles);
     //MenuItem menuItemDemoMode = MenuItem((char *)"Demo Mode", &demoMode);
     MenuItem menuItemExit = MenuItem((char *)"Exit Settings", &exit, true);
@@ -77,12 +89,16 @@ class Settings : public Runnable {
       &menuItemMenuColor,
       &menuItemMoveMenu,
       &menuItemAutoplayDuration,
+#if CLOCK > 0
       &menuItemMoveClock,
       &menuItemClockColor,
       &menuItemClock24Hour,
       &menuItemSetTime,
       &menuItemSetDate,
+#endif
+#if AUDIO > 0
       &menuItemNoiseReduction,
+#endif
       &menuItemUpdateFiles,
       //&menuItemDemoMode,
       &menuItemExit,
@@ -131,19 +147,22 @@ class Settings : public Runnable {
     char* Drawable::name = (char *)"Settings";
 
     void load() {
+#if AUDIO > 0
       audioCalibration.load();
+#endif
       menuY = loadByteSetting(menuYFilename, 11);
     }
 
     void run() {
-      clockDisplay.readTime();
+#if CLOCK > 0
+        clockDisplay.readTime();
 
       menuItemMoveClock.visible = isTimeAvailable;
       menuItemClockColor.visible = isTimeAvailable;
       menuItemClock24Hour.visible = isTimeAvailable;
       menuItemSetTime.visible = isTimeAvailable;
       menuItemSetDate.visible = isTimeAvailable;
-
+#endif
       menuItemUpdateFiles.visible = *(unsigned long *)0x38080 != 0xffffffff && sdAvailable;
 
       settingsMenu.canMoveBack = true;

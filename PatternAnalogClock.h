@@ -42,7 +42,7 @@ public:
         clockDisplay.readTime();
 
         if (isTimeAvailable) {
-            uint8_t hour = time.Hour;
+            uint8_t hour = curtime.Hour;
             if (hour > 12)
                 hour -= 12;
 
@@ -50,19 +50,19 @@ public:
             int x;
             int y;
             // hour
-            radians = (90.0F - ((hour * 30.0F) + ((time.Minute * 29.0F) / 60.0F))) * M_PI / 180.0F;
+            radians = (90.0F - ((hour * 30.0F) + ((curtime.Minute * 29.0F) / 60.0F))) * M_PI / 180.0F;
             x = round(MATRIX_CENTRE_X + HOUR_HAND_RADIUS * cos(radians));
             y = round(MATRIX_CENTRE_Y - HOUR_HAND_RADIUS * sin(radians));
             effects.leds[XY(x, y)] += {255, 0, 0};
 
             // minute
-            radians = (90.0F - (time.Minute * 6.0F)) * M_PI / 180.0;
+            radians = (90.0F - (curtime.Minute * 6.0F)) * M_PI / 180.0;
             x = round(MATRIX_CENTRE_X + MIN_HAND_RADIUS * cos(radians));
             y = round(MATRIX_CENTRE_Y - MIN_HAND_RADIUS * sin(radians));
             effects.leds[XY(x, y)] += {0, 255, 0};
 
             // second
-            radians = (90.0F - ((float)time.Second * 6.0F)) * M_PI / 180.0F;
+            radians = (90.0F - ((float)curtime.Second * 6.0F)) * M_PI / 180.0F;
             x = round(MATRIX_CENTRE_X + SEC_IND_RADIUS * cos(radians));
             y = round(MATRIX_CENTRE_Y - SEC_IND_RADIUS * sin(radians));
             effects.leds[XY(x, y)] += {0, 0, 255};

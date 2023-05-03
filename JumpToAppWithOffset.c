@@ -1,5 +1,5 @@
 #include "Arduino.h"
-
+# if 0
 void jumpToApplicationAt0x38080() {
   /* Load stack pointer and program counter from start of new program */
   asm("movw r0, #0x8080");
@@ -23,8 +23,8 @@ void jumpToApplicationAt0x8080() {
  */
 void resetPeripherals() {
   /* set (some of) USB back to normal */
-  NVIC_DISABLE_IRQ(IRQ_USBOTG);
-  NVIC_CLEAR_PENDING(IRQ_USBOTG);
+  NVIC_DISABLE_IRQ(IRQ_USB1);
+  NVIC_CLEAR_PENDING(IRQ_USB1);
   SIM_SCGC4 &= ~(SIM_SCGC4_USBOTG);
 
   /* disable all GPIO interrupts */
@@ -65,3 +65,4 @@ void startup_late_hook(void) {
     jumpToApplicationAt0x38080();
   }
 }
+#endif

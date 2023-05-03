@@ -67,8 +67,8 @@ public:
   void start() {
     int ampm = clockDigitalShort.twentyFourHour ? 0 : 1;
     //update score / time
-    mins = time.Minute;
-    hours = time.Hour;
+    mins = curtime.Minute;
+    hours = curtime.Hour;
     if (hours > 12) {
       hours = hours - ampm * 12;
     }
@@ -88,7 +88,7 @@ public:
     }
 
     // draw hh:mm seperator colon that blinks once per second
-    if (time.Second % 2 == 0) {
+    if (curtime.Second % 2 == 0) {
       indexedLayer.drawPixel(16, 2, 1);
       indexedLayer.drawPixel(16, 4, 1);
     }
@@ -145,11 +145,11 @@ public:
     }
 
     //if coming up to the minute: secs = 59 and mins < 59, flag bat 2 (right side) to miss the return so we inc the minutes score
-    if (time.Second == 59 && time.Minute < 59) {
+    if (curtime.Second == 59 && curtime.Minute < 59) {
       bat1miss = 1;
     }
     // if coming up to the hour: secs = 59  and mins = 59, flag bat 1 (left side) to miss the return, so we inc the hours score.
-    if (time.Second == 59 && time.Minute == 59) {
+    if (curtime.Second == 59 && curtime.Minute == 59) {
       bat2miss = 1;
     }
 
@@ -369,8 +369,8 @@ public:
       //update score / time
       int ampm = clockDigitalShort.twentyFourHour ? 0 : 1;
 
-      mins = time.Minute;
-      hours = time.Hour;
+      mins = curtime.Minute;
+      hours = curtime.Hour;
       if (hours > 12) {
         hours = hours - ampm * 12;
       }

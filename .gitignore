@@ -17,3 +17,8 @@ Visual Micro
 Thumbs.db
 *.sln
 *.vcxproj
+__vm/
+.vs/
+bin/
+*.hex
+CppProperties.json

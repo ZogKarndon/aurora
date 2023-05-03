@@ -31,7 +31,7 @@
 #include "PatternNoiseSmearing.h"
 #include "PatternSpiro.h"
 #include "PatternRadar.h"
-#include "PatternAnalogClock.h"
+//#include "PatternAnalogClock.h"
 #include "PatternSwirl.h"
 #include "PatternPendulumWave.h"
 #include "PatternFlowField.h"
@@ -71,7 +71,7 @@ class Patterns : public Playlist {
     PatternMultipleStream8 multipleStream8;
     PatternSpiro spiro;
     PatternRadar radar;
-    PatternAnalogClock analogClock;
+//    PatternAnalogClock analogClock;
     PatternSwirl swirl;
     PatternPendulumWave pendulumWave;
     PatternFlowField flowField;
@@ -107,7 +107,7 @@ class Patterns : public Playlist {
       return currentIndex;
     }
 
-    static const int PATTERN_COUNT = 37;
+    static const int PATTERN_COUNT = 36; // was 37
 
     Drawable* shuffledItems[PATTERN_COUNT];
 
@@ -133,7 +133,7 @@ class Patterns : public Playlist {
       &wave,
       &rainbowFlag,
       &attract,
-      &analogClock,
+//      &analogClock,
       &swirl,
       &bounce,
       &flock,
@@ -169,12 +169,20 @@ class Patterns : public Playlist {
 
     void stop() {
       if (currentItem)
+      {
+        Serial.print(F("stoping "));
+        Serial.println(currentItem->name);
         currentItem->stop();
+      }
     }
 
     void start() {
       if (currentItem)
+      {
+        Serial.print(F("starting "));
+        Serial.println(currentItem->name);
         currentItem->start();
+      }
     }
 
     void move(int step) {
@@ -188,8 +196,8 @@ class Patterns : public Playlist {
 
       moveTo(currentIndex);
 
-      if (!isTimeAvailable && currentItem == &analogClock)
-        move(step);
+//      if (!isTimeAvailable && currentItem == &analogClock)
+//        move(step);
     }
 
     void moveRandom(int step) {
@@ -207,10 +215,14 @@ class Patterns : public Playlist {
       currentItem = shuffledItems[currentIndex];
 
       if (currentItem)
+      {
+        Serial.print(F("Moving to"));
+        Serial.println(currentItem->name);
         currentItem->start();
+      }
 
-      if (!isTimeAvailable && currentItem == &analogClock)
-        moveRandom(step);
+//      if (!isTimeAvailable && currentItem == &analogClock)
+//        moveRandom(step);
     }
 
     void shuffleItems() {
@@ -232,12 +244,20 @@ class Patterns : public Playlist {
       currentItem = items[currentIndex];
 
       if (currentItem)
+      {
+        Serial.print(F("Moving to"));
+        Serial.println(currentItem->name);
         currentItem->start();
+      }
     }
 
     unsigned int drawFrame() {
+#if AUDIO > 0
       ReadAudio();
-      return currentItem->drawFrame();
+#endif
+        Serial.print(F("drawing "));
+        Serial.println(currentItem->name);
+              return currentItem->drawFrame();
     }
 
     void listPatterns() {
