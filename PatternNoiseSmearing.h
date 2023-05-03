@@ -93,7 +93,7 @@ public:
     yy = 8 + cos8(millis() / 7) / 16;
     effects.leds[XY(xx, yy)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue + 80);
 
-    effects.leds[XY(15, 15)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue + 160);
+    effects.leds[XY(MATRIX_WIDTH/2, MATRIX_HEIGHT/2)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue + 160);
 
     noise_x += 1000;
     noise_y += 1000;
@@ -124,8 +124,8 @@ public:
     //CLS();
     effects.DimAll(235);
 
-    for (uint8_t i = 3; i < 32; i = i + 4) {
-      effects.leds[XY(i, 15)] += effects.ColorFromCurrentPalette(i * 8);
+    for (uint8_t i = 3; i < MATRIX_WIDTH; i = i + 4) {
+      effects.leds[XY(i, MATRIX_CENTER_Y)] += effects.ColorFromCurrentPalette(i * 8);
     }
 
     // Noise
@@ -157,7 +157,7 @@ public:
     //CLS();
     effects.DimAll(235);
 
-    effects.leds[XY(15, 15)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue);
+    effects.leds[XY(MATRIX_CENTER_X-1, MATRIX_CENTER_Y-1)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue);
 
 
     // Noise
@@ -191,8 +191,8 @@ public:
     effects.DimAll(235);
 
 
-    for (uint8_t i = 3; i < 32; i = i + 4) {
-      effects.leds[XY(i, 31)] += effects.ColorFromCurrentPalette(i * 8);
+    for (uint8_t i = 3; i < MATRIX_CENTER_X-1; i = i + 4) {
+      effects.leds[XY(i, MATRIX_HEIGHT-1)] += effects.ColorFromCurrentPalette(i * 8);
     }
 
     // Noise
@@ -223,8 +223,8 @@ public:
     effects.DimAll(230);
 
     // draw grid of rainbow dots on top of the dimmed image
-    for (uint8_t y = 1; y < 32; y = y + 6) {
-      for (uint8_t x = 1; x < 32; x = x + 6) {
+    for (uint8_t y = 1; y < MATRIX_HEIGHT; y = y + 6) {
+      for (uint8_t x = 1; x < MATRIX_WIDTH; x = x + 6) {
 
         effects.leds[XY(x, y)] += effects.ColorFromCurrentPalette((x * y) / 4);
       }

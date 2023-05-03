@@ -378,7 +378,7 @@ void setup()
     SdFile::dateTimeCallback(dateTime);
 
     // default to patterns
-    menu.currentIndex = 1;
+    menu.currentIndex = 0;
 
     if (sdAvailable) {
         loadRemotesSetting();
@@ -491,7 +491,7 @@ void listPatterns() {
 
 bool setPattern(String name) {
     if (patterns.setPattern(name)) {
-        menu.currentIndex = 1;
+        menu.currentIndex = 0;
         menu.visible = false;
         return true;
     }
@@ -500,7 +500,7 @@ bool setPattern(String name) {
 
 bool setPattern(int index) {
     if (patterns.setPattern(index)) {
-        menu.currentIndex = 1;
+        menu.currentIndex = 0;
         menu.visible = false;
         return true;
     }
