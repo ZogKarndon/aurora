@@ -59,23 +59,32 @@ public:
         // target position
         float targetDegrees = degrees + speed;
         float targetRadians = radians(targetDegrees);
-        int targetX = (int) (MATRIX_CENTER_X + radius * cos(targetRadians));
-        int targetY = (int) (MATRIX_CENTER_Y - radius * sin(targetRadians));
+        int targetX = round (MATRIX_CENTER_X + (radius * cos(targetRadians)));
+        int targetY = round (MATRIX_CENTER_Y - (radius * sin(targetRadians)));
 
         float tempDegrees = degrees;
+        int maxloop = 4;
 
         do{
             float radians = radians(tempDegrees);
-            x = (int) (MATRIX_CENTER_X + radius * cos(radians));
-            y = (int) (MATRIX_CENTER_Y - radius * sin(radians));
+            x = round (MATRIX_CENTER_X + (radius * cos(radians)));
+            y = round (MATRIX_CENTER_Y - (radius * sin(radians)));
 
             backgroundLayer.drawPixel(x, y, color);
             backgroundLayer.drawPixel(y, x, color);
 
             tempDegrees += 1;
             if (tempDegrees >= 360)
+            {
                 tempDegrees = 0;
-        } while (x != targetX || y != targetY);
+            }
+
+            if (--maxloop == 0)
+            {
+                break;
+            }
+
+        } while (x != targetX || y != targetY );
 
         degrees += speed;
 
