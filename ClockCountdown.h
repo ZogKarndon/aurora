@@ -30,7 +30,7 @@
 
 class ClockCountdown : public Drawable {
 public:
-  char timeBuffer[9];
+  char timeBuffer[15];
 
   tmElements_t target;
   tmElements_t remaining;

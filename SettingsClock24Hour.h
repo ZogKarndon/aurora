@@ -39,7 +39,7 @@ class SettingsClock24Hour : public Runnable {
         if (clockDigitalShort.twentyFourHour)
           hour = 24;
 
-        char timeBuffer[7];
+        char timeBuffer[9];
         sprintf(timeBuffer, "%d hour", hour);
 
         int16_t y = clockDigitalShort.y;

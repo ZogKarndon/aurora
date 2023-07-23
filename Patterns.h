@@ -113,6 +113,7 @@ class Patterns : public Playlist {
 
     Drawable* items[PATTERN_COUNT] = {
       //&pongClock,
+      &spin,
       &spiro,
       &paletteSmear,
       &multipleStream8,
@@ -128,7 +129,6 @@ class Patterns : public Playlist {
       &incrementalDrift2,
       &munch,
       &electricMandala,
-      &spin,
       &simplexNoise,
       &wave,
       &rainbowFlag,
@@ -161,7 +161,7 @@ class Patterns : public Playlist {
 
       shuffleItems();
 
-      this->currentItem = items[0];
+      this->currentItem = shuffledItems[0];
       this->currentItem->start();
     }
 
@@ -184,8 +184,16 @@ class Patterns : public Playlist {
     void move(int step) {
       currentIndex += step;
 
-      if (currentIndex >= PATTERN_COUNT) currentIndex = 0;
-      else if (currentIndex < 0) currentIndex = PATTERN_COUNT - 1;
+      if (currentIndex >= PATTERN_COUNT)
+      {
+          currentIndex = 0;
+          shuffleItems();
+      }
+      else if (currentIndex < 0)
+      {
+          currentIndex = PATTERN_COUNT - 1;
+          shuffleItems();
+      }
 
       if (effects.paletteIndex == effects.RandomPaletteIndex)
         effects.RandomPalette();
@@ -235,11 +243,11 @@ class Patterns : public Playlist {
 
       currentIndex = index;
 
-      currentItem = items[currentIndex];
+      currentItem = shuffledItems[currentIndex];
 
       if (currentItem)
       {
-        Serial.print(F("Moving to"));
+        Serial.print(F("Moving to "));
         Serial.println(currentItem->name);
         currentItem->start();
       }
@@ -261,7 +269,7 @@ class Patterns : public Playlist {
 
       for (int i = 0; i < PATTERN_COUNT; i++) {
         Serial.print(F("    \""));
-        Serial.print(items[i]->name);
+        Serial.print(shuffledItems[i]->name);
         if (i == PATTERN_COUNT - 1)
           Serial.println(F("\""));
         else
@@ -274,7 +282,7 @@ class Patterns : public Playlist {
 
     bool setPattern(String name) {
       for (int i = 0; i < PATTERN_COUNT; i++) {
-        if (name.compareTo(items[i]->name) == 0) {
+        if (name.compareTo(shuffledItems[i]->name) == 0) {
           moveTo(i);
           return true;
         }

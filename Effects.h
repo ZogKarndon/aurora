@@ -738,10 +738,10 @@ public:
   void MoveX(byte delta) {
     for (int y = 0; y < MATRIX_HEIGHT; y++) {
       for (int x = 0; x < MATRIX_WIDTH - delta; x++) {
-        leds2[XY(x, y)] = leds[XY(x + delta, y)];
+        leds2[SXY(x, y)] = leds[SXY(x + delta, y)];
       }
       for (int x = MATRIX_WIDTH - delta; x < MATRIX_WIDTH; x++) {
-        leds2[XY(x, y)] = leds[XY(x + delta - MATRIX_WIDTH, y)];
+        leds2[SXY(x, y)] = leds[SXY(x + delta - MATRIX_WIDTH, y)];
       }
     }
 
@@ -775,13 +775,21 @@ public:
     // move delta pixelwise
     for (int y = 0; y < MATRIX_HEIGHT; y++) {
       uint16_t amount = noise[0][y] * amt;
-      byte delta = 31 - (amount / 256);
+      int delta = (MATRIX_WIDTH-1) - (amount / 256);
+      if (delta < 0)
+      {
+          delta = 0;
+      }
+      else if (delta > MATRIX_WIDTH)
+      {
+          delta = MATRIX_WIDTH;
+      }
 
       for (int x = 0; x < MATRIX_WIDTH - delta; x++) {
-        leds2[XY(x, y)] = leds[XY(x + delta, y)];
+        leds2[SXY(x, y)] = leds[SXY(x + delta, y)];
       }
       for (int x = MATRIX_WIDTH - delta; x < MATRIX_WIDTH; x++) {
-        leds2[XY(x, y)] = leds[XY(x + delta - MATRIX_WIDTH, y)];
+        leds2[SXY(x, y)] = leds[SXY(x + delta - MATRIX_WIDTH, y)];
       }
     }
 
@@ -791,7 +799,16 @@ public:
 
     for (uint8_t y = 0; y < MATRIX_HEIGHT; y++) {
       uint16_t amount = noise[0][y] * amt;
-      byte delta = 31 - (amount / 256);
+      int delta = (MATRIX_WIDTH - 1) - (amount / 256);
+      if (delta < 0)
+      {
+          delta = 0;
+      }
+      else if (delta > MATRIX_WIDTH)
+      {
+          delta = MATRIX_WIDTH;
+      }
+
       byte fractions = amount - (delta * 256);
 
       for (uint8_t x = 1; x < MATRIX_WIDTH; x++) {
@@ -818,13 +835,21 @@ public:
     // move delta pixelwise
     for (int x = 0; x < MATRIX_WIDTH; x++) {
       uint16_t amount = noise[x][0] * amt;
-      byte delta = 31 - (amount / 256);
+      int delta = 31 - (amount / 256);
+      if (delta < 0)
+      {
+          delta = 0;
+      }
+      else if (delta > MATRIX_WIDTH)
+      {
+          delta = MATRIX_WIDTH;
+      }
 
       for (int y = 0; y < MATRIX_WIDTH - delta; y++) {
-        leds2[XY(x, y)] = leds[XY(x, y + delta)];
+        leds2[SXY(x, y)] = leds[SXY(x, y + delta)];
       }
       for (int y = MATRIX_WIDTH - delta; y < MATRIX_WIDTH; y++) {
-        leds2[XY(x, y)] = leds[XY(x, y + delta - MATRIX_WIDTH)];
+        leds2[SXY(x, y)] = leds[SXY(x, y + delta - MATRIX_WIDTH)];
       }
     }
 
@@ -834,7 +859,15 @@ public:
 
     for (uint8_t x = 0; x < MATRIX_HEIGHT; x++) {
       uint16_t amount = noise[x][0] * amt;
-      byte delta = 31 - (amount / 256);
+      int delta = 31 - (amount / 256);
+      if (delta < 0)
+      {
+          delta = 0;
+      }
+      else if (delta > MATRIX_WIDTH)
+      {
+          delta = MATRIX_WIDTH;
+      }
       byte fractions = amount - (delta * 256);
 
       for (uint8_t y = 1; y < MATRIX_WIDTH; y++) {

@@ -60,8 +60,8 @@ public:
     // Noise
     noise_x += 1000;
     noise_y += 1000;
-    noise_scale_x = 4000;
-    noise_scale_y = 4000;
+    noise_scale_x = 2000;
+    noise_scale_y = 2000;
     effects.FillNoise();
 
     effects.MoveX(8);
@@ -93,20 +93,20 @@ public:
     yy = 8 + cos8(millis() / 7) / 16;
     effects.leds[XY(xx, yy)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue + 80);
 
-    effects.leds[XY(MATRIX_WIDTH/2, MATRIX_HEIGHT/2)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue + 160);
+    effects.leds[XY(MATRIX_CENTRE_X, MATRIX_CENTRE_Y)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue + 160);
 
     noise_x += 1000;
     noise_y += 1000;
     noise_z += 1000;
-    noise_scale_x = 4000;
-    noise_scale_y = 4000;
+    noise_scale_x = 2000;
+    noise_scale_y = 2000;
     effects.FillNoise();
 
     effects.MoveX(3);
-    effects.MoveFractionalNoiseY(4);
+    effects.MoveFractionalNoiseX();
 
     effects.MoveY(3);
-    effects.MoveFractionalNoiseX(4);
+    effects.MoveFractionalNoiseY();
 
     patternNoiseSmearingHue++;
 
@@ -132,15 +132,15 @@ public:
     noise_x += 1000;
     noise_y += 1000;
     noise_z += 1000;
-    noise_scale_x = 4000;
-    noise_scale_y = 4000;
+    noise_scale_x = 2000;
+    noise_scale_y = 2000;
     effects.FillNoise();
 
     effects.MoveX(3);
-    effects.MoveFractionalNoiseY(4);
+    effects.MoveFractionalNoiseY();
 
     effects.MoveY(3);
-    effects.MoveFractionalNoiseX(4);
+    effects.MoveFractionalNoiseX();
 
     return 1;
   }
@@ -159,12 +159,11 @@ public:
 
     effects.leds[XY(MATRIX_CENTER_X-1, MATRIX_CENTER_Y-1)] += effects.ColorFromCurrentPalette(patternNoiseSmearingHue);
 
-
     // Noise
     noise_x += 1000;
     noise_y += 1000;
-    noise_scale_x = 4000;
-    noise_scale_y = 4000;
+    noise_scale_x = 2000;
+    noise_scale_y = 2000;
     effects.FillNoise();
 
     effects.MoveX(8);
@@ -191,7 +190,7 @@ public:
     effects.DimAll(235);
 
 
-    for (uint8_t i = 3; i < MATRIX_CENTER_X-1; i = i + 4) {
+    for (uint8_t i = 3; i < MATRIX_CENTRE_X; i = i + 4) {
       effects.leds[XY(i, MATRIX_HEIGHT-1)] += effects.ColorFromCurrentPalette(i * 8);
     }
 
@@ -199,15 +198,15 @@ public:
     noise_x += 1000;
     noise_y += 1000;
     noise_z += 1000;
-    noise_scale_x = 4000;
-    noise_scale_y = 4000;
+    noise_scale_x = 2000;
+    noise_scale_y = 2000;
     effects.FillNoise();
 
     effects.MoveX(3);
-    effects.MoveFractionalNoiseY(4);
+    effects.MoveFractionalNoiseX();
 
     effects.MoveY(4);
-    effects.MoveFractionalNoiseX(4);
+    effects.MoveFractionalNoiseY();
 
     return 0;
   }
@@ -234,15 +233,15 @@ public:
     noise_x += 1000;
     noise_y += 1000;
     noise_z += 1000;
-    noise_scale_x = 4000;
-    noise_scale_y = 4000;
+    noise_scale_x = 2000;
+    noise_scale_y = 2000;
     effects.FillNoise();
 
     effects.MoveX(3);
-    effects.MoveFractionalNoiseX(4);
+    effects.MoveFractionalNoiseX();
 
     effects.MoveY(3);
-    effects.MoveFractionalNoiseY(4);
+    effects.MoveFractionalNoiseY();
 
     return 0;
   }
@@ -267,15 +266,15 @@ public:
     // Noise
     noise_x += 1000;
     noise_y += 1000;
-    noise_scale_x = 4000;
-    noise_scale_y = 4000;
+    noise_scale_x = 2000;
+    noise_scale_y = 2000;
     effects.FillNoise();
 
     effects.MoveX(3);
-    effects.MoveFractionalNoiseY(4);
+    effects.MoveFractionalNoiseY();
 
     effects.MoveY(3);
-    effects.MoveFractionalNoiseX(4);
+    effects.MoveFractionalNoiseX();
 
     return 0;
   }
@@ -299,10 +298,10 @@ public:
       CRGB::Violet
     };
 
-    uint8_t y = 2;
+    uint8_t y = 1;
 
     for (uint8_t c = 0; c < 6; c++) {
-      for (uint8_t j = 0; j < 5; j++) {
+      for (uint8_t j = 0; j < 7; j++) {
         for (uint8_t x = 0; x < MATRIX_WIDTH; x++) {
           effects.leds[XY(x, y)] += rainbow[c];
         }
@@ -316,15 +315,15 @@ public:
     // Noise
     noise_x += 1000;
     noise_y += 1000;
-    noise_scale_x = 4000;
-    noise_scale_y = 4000;
+    noise_scale_x = 2000;
+    noise_scale_y = 2000;
     effects.FillNoise();
 
     effects.MoveX(3);
-    effects.MoveFractionalNoiseY(4);
+    effects.MoveFractionalNoiseY();
 
     effects.MoveY(3);
-    effects.MoveFractionalNoiseX(4);
+    effects.MoveFractionalNoiseX();
 
     return 0;
   }

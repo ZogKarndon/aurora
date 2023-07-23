@@ -85,7 +85,7 @@ public:
         // Display current generation
         for (int i = 0; i < MATRIX_WIDTH; i++) {
             for (int j = 0; j < MATRIX_HEIGHT; j++) {
-                effects.leds[XY(i, j)] = effects.ColorFromCurrentPalette(world[i][j].hue * 4, world[i][j].brightness);
+                effects.leds[SXY(i, j)] = effects.ColorFromCurrentPalette(world[i][j].hue * 4, world[i][j].brightness);
             }
         }
 

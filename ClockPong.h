@@ -94,7 +94,7 @@ public:
     }
 
     indexedLayer.setFont(font3x5);
-    char buffer[3];
+    char buffer[4];
 
     sprintf(buffer, "%02d", hours);
     indexedLayer.drawString(8, 1, 1, buffer);

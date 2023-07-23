@@ -24,7 +24,7 @@
 
 class PatternAttract : public Drawable {
 private:
-    const int count = 8;
+    const int count = 10;
     Attractor attractor;
 
 public:
@@ -38,7 +38,7 @@ public:
             direction = -1;
 
         for (int i = 0; i < count; i++) {
-            Boid boid = Boid(15, 31 - i);
+            Boid boid = Boid(MATRIX_CENTRE_X, (MATRIX_WIDTH -1) - i);
             boid.mass = 1; // random(0.1, 2);
             boid.velocity.x = ((float) random(40, 50)) / 100.0;
             boid.velocity.x *= direction;

@@ -41,7 +41,7 @@ class SettingsSetDate : public Runnable {
     SetDateState state = SetYear;
     unsigned int currentStateIndex = 0;
 
-    char timeBuffer[9];
+    char timeBuffer[12];
 
     void setTimeHardware() {
       if (hasDS1307RTC)

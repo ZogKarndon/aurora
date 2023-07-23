@@ -117,6 +117,7 @@ char* autoplydFilename = (char*)"autoplyd.txt";
 
 // function prototypes used in header files
 void saveByteSetting(const char* name, byte value);
+uint16_t SXY(int16_t x, int16_t y);
 uint16_t XY(uint8_t x, uint8_t y);
 void listAudioPatterns();
 bool setAudioPattern(String name);
@@ -164,10 +165,10 @@ void saveSettings();
 #define WEATHER 0
 #define GAMES 0
 #define AUDIO 0
-#define CLOCK 0
+#define CLOCK 1
 #define AUDIOPATTERN 0
 
-#ifdef AUDIO > 0
+#if AUDIO > 0
 #include "AudioLogic.h"
 #endif
 
@@ -348,7 +349,7 @@ void setup()
 
     mainMenuItemCount = sizeof(mainMenuItems) / sizeof(MenuItem*);
 
-#if CLOCK > 0
+#if CLOCK > 2
     // initialize realtime clock
     // switch pins to use 16/17 for I2C instead of 18/19
     pinMode(18, INPUT);
@@ -364,7 +365,8 @@ void setup()
 
     // Serial.print(F("hasTeensyRTC: "));
     // Serial.println(hasTeensyRTC);
-
+#endif
+#if CLOCK > 0
     clockDisplay.readTime();
 #endif
 
@@ -661,8 +663,10 @@ void loadSettings() {
     boundBackgroundBrightness();
     backgroundLayer.setBrightness(backgroundBrightness);
 
+#if AUDIO > 0
     audioScale = loadByteSetting(audiosclFilename, 0);
     boundAudioScale();
+#endif
 
     menuColor.red = loadByteSetting(menuRFilename, 0);
     menuColor.green = loadByteSetting(menuGFilename, 0);
@@ -674,7 +678,9 @@ void loadSettings() {
 }
 
 void saveSettings() {
+#if AUDIO > 0
     saveAudioScaleSetting();
+#endif
     saveBrightnessSetting();
     saveBackgroundBrightnessSetting();
     saveMenuColor();
@@ -975,7 +981,26 @@ void toggleSettingsMenuVisibility() {
 }
 
 // translates from x, y into an index into the LED array
-uint16_t XY(uint8_t x, uint8_t y) {
+uint16_t SXY(int16_t x, int16_t y) {
+
+    // clip FIRST
+    if (y >= MATRIX_HEIGHT) {
+        y = MATRIX_HEIGHT - 1;
+    }
+    if (y < 0) {
+        y = 0;
+    }
+    if (x >= MATRIX_WIDTH) {
+        x = MATRIX_WIDTH - 1;
+    }
+    if (x < 0) {
+        x = 0;
+    }
+    return XY(static_cast<uint8_t>(x), static_cast<uint8_t>(y));
+}
+
+uint16_t XY(uint8_t x, uint8_t y)
+{
     uint8_t hwx, hwy;
 
     // map pixel into hardware buffer before writing

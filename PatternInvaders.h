@@ -30,6 +30,9 @@ class PatternInvadersSmall : public Drawable {
     uint8_t x = 1;
     uint8_t y = 1;
 
+    static const uint8_t IMG_HEIGHT = 5;
+    static const uint8_t IMG_WIDTH = 5;
+
   public:
     PatternInvadersSmall() {
       name = (char *)"Invaders Small";
@@ -55,13 +58,13 @@ class PatternInvadersSmall : public Drawable {
         }
       }
 
-      x += 6;
-      if (x > 25) {
+      x += IMG_WIDTH + 1;   // for separation
+      if (x > (MATRIX_WIDTH - (IMG_WIDTH+2))) {
         x = 1;
-        y += 6;
+        y += IMG_HEIGHT + 1;
       }
 
-      if (y > 25) y = x = 1;
+      if (y > MATRIX_HEIGHT - (IMG_HEIGHT + 2)) y = x = 1;
 
       return 125;
     }
@@ -71,7 +74,8 @@ class PatternInvadersMedium : public Drawable {
   private:
     uint8_t x = 0;
     uint8_t y = 0;
-
+    static const uint8_t IMG_HEIGHT = 10;
+    static const uint8_t IMG_WIDTH = 10;
   public:
     PatternInvadersMedium() {
       name = (char *)"Invaders Medium";
@@ -97,13 +101,14 @@ class PatternInvadersMedium : public Drawable {
         }
       }
 
-      x += 11;
-      if (x > 22) {
+      x += IMG_WIDTH + 1;   // for separation
+      if (x > (MATRIX_WIDTH - (IMG_WIDTH+2))) {
         x = 0;
-        y += 11;
+        y += IMG_HEIGHT + 1;
       }
 
-      if (y > 22) y = x = 0;
+      if (y > MATRIX_HEIGHT - (IMG_HEIGHT + 2)) y = x = 0;
+
 
       return 500;
     }
@@ -111,6 +116,10 @@ class PatternInvadersMedium : public Drawable {
 
 class PatternInvadersLarge : public Drawable {
   private:
+      uint8_t x = 1;
+      uint8_t y = 1;
+      static const uint8_t IMG_HEIGHT = 20;
+      static const uint8_t IMG_WIDTH = 20;
 
   public:
     PatternInvadersLarge() {
@@ -126,20 +135,29 @@ class PatternInvadersLarge : public Drawable {
 
       CRGB color1 = effects.ColorFromCurrentPalette(random(0, 255));
 
-      for (int x = 0; x < 3; x++) {
-        for (int y = 0; y < 5; y++) {
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 5; j++) {
           CRGB color = CRGB::Black;
 
           if (random(0, 2) == 1) {
             color = color1;
           }
 
-          backgroundLayer.fillRectangle(1 + x * 6, 1 + y * 6, 5 + x * 6, 5 + y * 6, color);
+          backgroundLayer.fillRectangle(x + i * 6, y + j * 6, (x + 4) + i * 6, (y + 4) + j * 6, color);
 
-          if (x < 2)
-            backgroundLayer.fillRectangle(1 + (4 - x) * 6, 1 + y * 6, 5 + (4 - x) * 6, 5 + y * 6, color);
+          if (i < 2)
+            backgroundLayer.fillRectangle(x + (4 - i) * 6, y + j * 6, (x+4) + (4 - i) * 6, (y+4) + j * 6, color);
         }
       }
+
+      x += IMG_WIDTH + 1;   // for separation
+      if (x > (MATRIX_WIDTH - (IMG_WIDTH + 2))) {
+          x = 1;
+          y += IMG_HEIGHT + 1;
+      }
+
+      if (y > MATRIX_HEIGHT - (IMG_HEIGHT + 2)) y = x = 1;
+
 
       return 2000;
     }

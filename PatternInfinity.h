@@ -43,7 +43,7 @@ public:
 
         // the vertical position of the head oscillates
         // from 8 to 23 and back (hard-coded for a 32x32 matrix)
-        int y = map8(sin8(effects.osci[3]), 8, 23);
+        int y = map8(sin8(effects.osci[3]), 8, MATRIX_HEIGHT-8);
 
         // the hue oscillates from 0 to 255, overflowing back to 0
         byte hue = sin8(effects.osci[5]);

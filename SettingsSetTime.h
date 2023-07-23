@@ -28,7 +28,7 @@ class SettingsSetTime : public Runnable {
     SetTimeState state = SetHour;
     unsigned int currentStateIndex = 0;
 
-    char timeBuffer[9];
+    char timeBuffer[14];
 
     void setTimeHardware() {
       if (hasDS1307RTC)

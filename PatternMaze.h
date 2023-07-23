@@ -82,8 +82,8 @@ private:
         }
     };
 
-    static const int width = 16;
-    static const int height = 16;
+    static const int width = MATRIX_CENTER_X;
+    static const int height = MATRIX_CENTER_Y;
 
     int imageWidth = width * 2;
     int imageHeight = height * 2;
